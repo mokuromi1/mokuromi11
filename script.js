@@ -1,4 +1,4 @@
-const API_KEY = 'YOUR_API_KEY'; // ここに取得したAPIキーを設定（**絶対に公開しない！**）
+const API_KEY = 'AIzaSyBhvzctVsyI1NL4dcLFMqStsxzwSQI0d9s'; // 送っていただいたAPIキーを設定（**本番環境では絶対にこの方法を使わない！**）
 const searchForm = document.getElementById('search-form');
 const resultsArea = document.getElementById('results-area');
 
@@ -22,7 +22,7 @@ async function searchVideos(query) {
         }
         const data = await response.json();
 
-        const videos = videoId ? (data.items || []) : (data.items || []); // data.items が存在しない場合への対応
+        const videos = videoId ? (data.items || []) : (data.items || []);
         if (videos.length === 0) {
             resultsArea.innerHTML = '<p>No results found.</p>';
             return;
@@ -30,7 +30,7 @@ async function searchVideos(query) {
         displayResults(videos);
     } catch (error) {
         console.error('Error fetching data:', error);
-        resultsArea.innerHTML = `<p>Error fetching data: ${error.message}</p>`; // エラーメッセージを表示
+        resultsArea.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     }
 }
 
@@ -54,14 +54,13 @@ function extractVideoId(url) {
     return null;
 }
 
-
 function displayResults(videos) {
     resultsArea.innerHTML = '';
 
     videos.forEach(video => {
         const videoId = video.id.videoId || video.id;
         const title = video.snippet.title;
-        const thumbnail = video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url; // サムネイルが存在しない場合への対応
+        const thumbnail = video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url;
 
         const videoElement = document.createElement('div');
         videoElement.className = "video-container";
