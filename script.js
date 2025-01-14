@@ -11,15 +11,15 @@ searchForm.addEventListener('submit', (event) => {
 async function searchVideos(query) {
     let videoId = extractVideoId(query);
     let apiUrl;
+    let apiMethod = videoId ? "videos" : "search"; // 検索方法を記録
 
     if (videoId) {
         apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
-        console.log("Searching by videoId:", videoId); // videoId検索のログ
     } else {
         apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${API_KEY}&type=video`;
-        console.log("Searching by query:", query);     // クエリ検索のログ
     }
 
+    console.log("Searching using:", apiMethod); // 検索方法をログ出力
     console.log("API Request URL:", apiUrl);
 
     try {
@@ -29,11 +29,20 @@ async function searchVideos(query) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error("API Response Error Text:", errorText);
+
+            // エラーレスポンスをJSONとしてパースを試みる (もしJSON形式の場合、詳細なエラー情報が得られる可能性がある)
+            try {
+                const errorJson = JSON.parse(errorText);
+                console.error("API Response Error JSON:", JSON.stringify(errorJson, null, 2));
+            } catch (jsonError) {
+                console.error("Error parsing JSON:", jsonError);
+            }
+
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("API Response Data:", JSON.stringify(data, null, 2)); // 整形されたJSONを出力
+        console.log("API Response Data:", JSON.stringify(data, null, 2));
 
         const videos = data.items || [];
         if (videos.length === 0) {
