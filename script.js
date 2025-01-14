@@ -1,4 +1,4 @@
-const API_KEY ='AIzaSyBhvzctVsyI1NL4dcLFMqStsxzwSQI0d9s';// 送っていただいたAPIキーを設定（**本番環境では絶対にこの方法を使わない！**）
+const API_KEY = 'AIzaSyBhvzctVsyI1NL4dcLFMqStsxzwSQI0d9s'; // 送っていただいたAPIキーを設定 (!!! 開発・テスト用。本番環境では絶対にこの方法を使わない !!!)
 const searchForm = document.getElementById('search-form');
 const resultsArea = document.getElementById('results-area');
 
@@ -22,7 +22,7 @@ async function searchVideos(query) {
         }
         const data = await response.json();
 
-        const videos = videoId ? (data.items || []) : (data.items || []);
+        const videos = data.items || [];
         if (videos.length === 0) {
             resultsArea.innerHTML = '<p>No results found.</p>';
             return;
@@ -38,13 +38,11 @@ function extractVideoId(url) {
     try {
         const urlObj = new URL(url);
         if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtu.be') {
-            const v = urlObj.searchParams.get('v');
-            if (v) return v;
-            const pathnameParts = urlObj.pathname.split('/');
-            if (urlObj.hostname === 'youtu.be' && pathnameParts.length > 1) {
-                return pathnameParts[1];
-            }
-            if (urlObj.pathname.includes('/embed/')) {
+            if (urlObj.searchParams.has('v')) {
+                return urlObj.searchParams.get('v');
+            } else if (urlObj.hostname === 'youtu.be' && urlObj.pathname.length > 1) {
+                return urlObj.pathname.substring(1);
+            } else if (urlObj.pathname.includes('/embed/')) {
                 return urlObj.pathname.split('/embed/')[1];
             }
         }
@@ -60,7 +58,7 @@ function displayResults(videos) {
     videos.forEach(video => {
         const videoId = video.id.videoId || video.id;
         const title = video.snippet.title;
-        const thumbnail = video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url;
+        const thumbnail = video.snippet.thumbnails?.medium?.url || video.snippet.thumbnails?.default?.url;
 
         const videoElement = document.createElement('div');
         videoElement.className = "video-container";
