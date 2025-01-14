@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyBhvzctVsyI1NL4dcLFMqStsxzwSQI0d9s'; // 送っていただいたAPIキーを設定（**本番環境では絶対にこの方法を使わない！**）
+const API_KEY ='AIzaSyBhvzctVsyI1NL4dcLFMqStsxzwSQI0d9s';// 送っていただいたAPIキーを設定（**本番環境では絶対にこの方法を使わない！**）
 const searchForm = document.getElementById('search-form');
 const resultsArea = document.getElementById('results-area');
 
