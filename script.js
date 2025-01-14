@@ -10,17 +10,30 @@ searchForm.addEventListener('submit', (event) => {
 
 async function searchVideos(query) {
     let videoId = extractVideoId(query);
+    let apiUrl;
 
-    const apiUrl = videoId
-        ? `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
-        : `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${API_KEY}&type=video`;
+    if (videoId) {
+        apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`;
+        console.log("Searching by videoId:", videoId); // videoId検索のログ
+    } else {
+        apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${API_KEY}&type=video`;
+        console.log("Searching by query:", query);     // クエリ検索のログ
+    }
+
+    console.log("API Request URL:", apiUrl);
 
     try {
         const response = await fetch(apiUrl);
+        console.log("API Response Status:", response.status);
+
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API Response Error Text:", errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const data = await response.json();
+        console.log("API Response Data:", JSON.stringify(data, null, 2)); // 整形されたJSONを出力
 
         const videos = data.items || [];
         if (videos.length === 0) {
@@ -29,7 +42,7 @@ async function searchVideos(query) {
         }
         displayResults(videos);
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
         resultsArea.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
     }
 }
